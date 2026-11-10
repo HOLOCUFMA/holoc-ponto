@@ -135,10 +135,9 @@
     <div id="mensagemFeedback" class="mensagem sucesso"></div>
 
     <select id="nomeFuncionario">
-        <!-- Gerado via Firebase -->
+        <!-- Gerado via Firebase e ORDENADO ALFABETICAMENTE -->
     </select>
 
-    <!-- NOVO: CAMPO DE SENHA PARA BATER O PONTO -->
     <input type="password" id="senhaPonto" placeholder="A MESMA SENHA DOS COMPUTADORES">
     
     <div class="buttons">
@@ -160,7 +159,7 @@
             </tr>
         </thead>
         <tbody id="tabelaPrincipal">
-            <!-- Dados do Firebase -->
+            <!-- Dados do Firebase ORDENADOS ALFABETICAMENTE -->
         </tbody>
     </table>
 
@@ -181,7 +180,6 @@
 
     <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;">
 
-    <!-- SEÇÃO: GERIR PESSOAS -->
     <h3>👥 Gerir Nomes da Lista</h3>
     <div class="form-manual">
         <div>
@@ -208,7 +206,7 @@
             </tr>
         </thead>
         <tbody id="tabelaGerirPessoas">
-            <!-- Gerida via Firebase -->
+            <!-- Gerida via Firebase ORDENADA ALFABETICAMENTE -->
         </tbody>
     </table>
 
@@ -217,7 +215,7 @@
     <h3>➕ Inserir Ponto Manualmente</h3>
     <div class="form-manual">
         <select id="adminNomeFuncionario">
-            <!-- Copiado do Firebase -->
+            <!-- Copiado do Firebase ORDENADO ALFABETICAMENTE -->
         </select>
         <div>
             <label style="font-size: 12px; color: #aaa;">Data do Ponto:</label>
@@ -352,16 +350,24 @@
         const selectPrincipal = document.getElementById('nomeFuncionario');
         const selectAdmin = document.getElementById('adminNomeFuncionario');
         let html = '<option value="">-- Selecione o seu nome na lista --</option>';
+        
         const grupos = {};
         listaFuncionarios.forEach(f => {
             if (!grupos[f.equipe]) grupos[f.equipe] = [];
             grupos[f.equipe].push(f.nome);
         });
+
+        // 1. ORDENAÇÃO ALFABÉTICA (A-Z) NOS MENUS (SELECT)
+        for (let equipe in grupos) {
+            grupos[equipe].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' }));
+        }
+
         for (let equipe in grupos) {
             html += `<optgroup label="${equipe}">`;
             grupos[equipe].forEach(nome => { html += `<option value="${nome}">${nome}</option>`; });
             html += `</optgroup>`;
         }
+
         selectPrincipal.innerHTML = html;
         selectAdmin.innerHTML = html;
         atualizarTabelaGerirPessoas();
@@ -370,7 +376,11 @@
     function atualizarTabelaGerirPessoas() {
         const tbody = document.getElementById('tabelaGerirPessoas');
         tbody.innerHTML = '';
-        listaFuncionarios.forEach(pessoa => {
+        
+        // 2. ORDENAÇÃO ALFABÉTICA (A-Z) NA TABELA DE GESTÃO DO ADMIN
+        const listaOrdenada = [...listaFuncionarios].sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+
+        listaOrdenada.forEach(pessoa => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td style="text-align: left;"><strong>${pessoa.nome}</strong></td>
@@ -450,7 +460,11 @@
                 trEq.className = `tr-equipe-header grupo-dia-${indexDia}`;
                 trEq.innerHTML = `<td colspan="3" style="text-align: left;">🔹 ${eq}</td>`;
                 tbody.appendChild(trEq);
-                gruposPorEquipe[eq].slice().reverse().forEach(registro => {
+                
+                // 3. ORDENAÇÃO ALFABÉTICA (A-Z) NO HISTÓRICO DA PÁGINA INICIAL
+                gruposPorEquipe[eq].sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+
+                gruposPorEquipe[eq].forEach(registro => {
                     const tr = document.createElement('tr');
                     tr.className = `grupo-dia-${indexDia}`;
                     tr.innerHTML = `<td style="text-align: left; padding-left: 40px;"><strong>${registro.nome}</strong></td><td class="hora">${registro.entrada || "--"}</td><td class="hora">${registro.saida || "--"}</td>`;
@@ -471,7 +485,6 @@
         const nome = select.value;
         if (!nome) return alert('Por favor, selecione o seu nome na lista.');
 
-        // VERIFICAÇÃO DA SENHA DO HOLOC
         const senhaInserida = document.getElementById('senhaPonto').value;
         if (senhaInserida !== 'holocufma') {
             return alert('❌ Palavra-passe incorreta! Apenas membros da equipa HOLOC podem registar o ponto.');
@@ -515,7 +528,6 @@
         }
         
         exibirMensagem(`✅ ${tipo} de ${nome} registada com sucesso!`);
-        
         document.getElementById('nomeFuncionario').value = ''; 
         document.getElementById('senhaPonto').value = ''; 
     }
@@ -609,7 +621,7 @@
         const minSaida = (h2 * 60) + (m2 || 0);
         
         let diff = minSaida - minEntrada;
-        if (diff < 0) diff += 24 * 60; // Caso vire a meia-noite
+        if (diff < 0) diff += 24 * 60;
         
         const horasFormatadas = String(Math.floor(diff / 60)).padStart(2, '0');
         const minsFormatados = String(diff % 60).padStart(2, '0');
@@ -676,7 +688,11 @@
         });
         rowExtRed.getCell(1).alignment = { horizontal: 'left' };
 
-        const extPessoas = listaFuncionarios.filter(p => p.equipe === 'Equipa de Extensão');
+        // 4. ORDENAÇÃO ALFABÉTICA (A-Z) NO EXCEL (Extensão)
+        const extPessoas = listaFuncionarios
+            .filter(p => p.equipe === 'Equipa de Extensão')
+            .sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+
         extPessoas.forEach(p => {
             const rowDados = [p.nome, '', ''];
             datasArray.forEach(d => {
@@ -713,7 +729,11 @@
         });
         rowPesqGreen.getCell(1).alignment = { horizontal: 'left' };
 
-        const pesqPessoas = listaFuncionarios.filter(p => p.equipe === 'Equipa de Pesquisa');
+        // 5. ORDENAÇÃO ALFABÉTICA (A-Z) NO EXCEL (Pesquisa)
+        const pesqPessoas = listaFuncionarios
+            .filter(p => p.equipe === 'Equipa de Pesquisa')
+            .sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+
         pesqPessoas.forEach(p => {
             const rowDados = [p.nome, '', ''];
             datasArray.forEach(d => {
