@@ -39,16 +39,14 @@
             color: #e0e0e0; 
             padding: 40px 20px; 
             margin: 0;
-            overflow-x: hidden; /* Evita scroll horizontal indesejado nas animações */
+            overflow-x: hidden;
         }
 
-        /* ESTRUTURA DE 3 COLUNAS */
         .main-layout {
             display: flex; justify-content: center; align-items: flex-start;
             gap: 25px; width: 100%; max-width: 1350px; margin: 0 auto;
         }
 
-        /* ANIMAÇÃO DE ENTRADA DOS PAINEIS */
         .container { 
             background-color: #1e1e1e; padding: 30px; border-radius: 12px; 
             width: 100%; max-width: 700px; 
@@ -62,10 +60,9 @@
             flex: 1; background-color: #1a1a1a; padding: 20px; border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.8); min-width: 250px;
             animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            opacity: 0; /* Para começar invisível antes da animação */
+            opacity: 0;
         }
         
-        /* Efeito escadinha (stagger) na entrada */
         .quadro-extensao { border-top: 4px solid #ff9100; animation-delay: 0.1s; }
         .quadro-pesquisa { border-top: 4px solid #4caf50; animation-delay: 0.2s; }
         
@@ -75,18 +72,15 @@
 
         .data-range { font-size: 11px; color: #888; text-align: center; margin-bottom: 15px; font-style: italic; }
 
-        /* LISTA INTERATIVA DO PLACAR DE HORAS */
         .lista-horas { list-style: none; padding: 0; margin: 0; }
         .lista-horas li {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
+            border-radius: 6px; transition: all 0.3s ease;
             animation: slideInRight 0.5s ease forwards;
         }
         .lista-horas li:last-child { border-bottom: none; }
         
-        /* O Efeito "Vivo" de Hover na Leaderboard */
         .quadro-extensao .lista-horas li:hover { 
             transform: translateX(8px) scale(1.02); 
             background-color: rgba(255, 145, 0, 0.1); 
@@ -120,7 +114,6 @@
         
         h2, h3 { text-align: center; margin-bottom: 20px; color: #ffffff; }
         
-        /* INPUTS E SELECTS COM EFEITO GLOW (NEON) */
         select, input[type="text"], input[type="password"], input[type="date"], input[type="time"] { 
             width: calc(100% - 24px); padding: 12px; margin-bottom: 15px; border: 1px solid #444; 
             border-radius: 6px; background-color: #252525; color: #fff; font-size: 16px;
@@ -129,8 +122,7 @@
         select:focus, input:focus { 
             outline: none; border-color: #ff9100; 
             box-shadow: 0 0 12px rgba(255, 145, 0, 0.3);
-            background-color: #2a2a2a;
-            transform: translateY(-2px);
+            background-color: #2a2a2a; transform: translateY(-2px);
         }
         
         .caixa-senha-ponto { background-color: #202020; padding: 15px; border-radius: 8px; border: 1px dashed #ff9100; margin-bottom: 20px; text-align: left; transition: all 0.3s; }
@@ -141,13 +133,11 @@
         optgroup { background-color: #1e1e1e; color: #aaa; font-weight: bold; }
         option { background-color: #2c2c2c; color: #fff; }
 
-        /* BOTÕES 3D INTERATIVOS */
         .buttons { display: flex; gap: 15px; margin-bottom: 15px; }
         button { 
             flex: 1; padding: 14px; border: none; border-radius: 6px; 
             cursor: pointer; font-weight: bold; font-size: 15px; 
-            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative; overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: hidden;
         }
         button:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 8px 20px rgba(0,0,0,0.5); filter: brightness(1.1); }
         button:active { transform: translateY(2px) scale(0.98); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
@@ -162,20 +152,15 @@
         .btn-add { background-color: #ff9100; color: #000; width: 100%; margin-bottom: 15px; font-weight: bold; }
         .btn-save { background-color: #0288d1; color: white; width: 100%; margin-bottom: 15px; font-weight: bold; }
 
-        /* MENSAGENS COM ANIMAÇÃO SLIDE E RADAR */
         .mensagem { 
             display: none; padding: 12px; margin-bottom: 15px; border-radius: 6px; 
-            text-align: center; font-weight: bold; font-size: 15px;
+            text-align: center; font-weight: bold; font-size: 14px;
             animation: slideDownMsg 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         .sucesso { background-color: rgba(76, 175, 80, 0.2); border: 1px solid #4caf50; color: #4caf50; }
         .erro { background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: #f44336; }
-        .radar-gps { 
-            background-color: #0288d1; color: white; border: none;
-            animation: pulseGPS 1.5s infinite; 
-        }
+        .radar-gps { background-color: #0288d1; color: white; border: none; animation: pulseGPS 1.5s infinite; }
 
-        /* TABELAS INTERATIVAS */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; text-align: center; }
         th, td { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 8px; transition: background-color 0.2s; }
         th { background-color: #222; color: #aaa; font-weight: 600; letter-spacing: 1px; }
@@ -187,14 +172,16 @@
         .tr-dia-header:hover { background-color: #2d2d2d; transform: scale(1.01); box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10; position: relative; }
         .tr-dia-header td { border-top: 2px solid #ff9100; border-bottom: none; border-radius: 6px 6px 0 0; }
         
-        /* ANIMAÇÃO DA SETINHA DO ACORDEÃO */
         .toggle-icon { display: inline-block; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); margin-right: 5px; }
         .toggle-icon.fechado { transform: rotate(-90deg); }
 
         .tr-equipe-header { background-color: #1a1a1a; color: #b0bec5; font-size: 12px; text-transform: uppercase; font-weight: bold; }
         .tr-equipe-header td { padding: 8px 10px 8px 30px; border-bottom: 1px solid #222; }
 
-        /* MODAL CINEMATOGRÁFICO */
+        .admin-table td { padding: 5px; }
+        .admin-table input[type="text"] { width: 100%; padding: 8px; margin: 0; border: 1px dashed #555; background-color: transparent; color: #90caf9; font-family: monospace; font-size: 14px; }
+        .admin-table input[type="text"]:focus { background-color: #333; border-style: solid; border-color: #ff9100; }
+        
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
@@ -222,19 +209,14 @@
 </head>
 <body>
 
-<!-- ENVOLTÓRIO PRINCIPAL PARA AS 3 COLUNAS -->
 <div class="main-layout" id="layoutPrincipal">
     
-    <!-- QUADRO ESQUERDO: HORAS DE EXTENSÃO -->
     <div class="quadro-lateral quadro-extensao">
         <h3>Equipa de Extensão</h3>
         <div class="data-range" id="dataRangeExtensao">A carregar datas...</div>
-        <ul class="lista-horas" id="listaHorasExtensao">
-            <!-- Gerado via Firebase -->
-        </ul>
+        <ul class="lista-horas" id="listaHorasExtensao"></ul>
     </div>
 
-    <!-- PAINEL CENTRAL: CHAMADA -->
     <div id="painelPrincipal" class="container" style="margin-bottom: 0;">
         <div class="logo-container">
             <img src="imagens/logo.svg" alt="Logótipo Holoc" onerror="this.src='logo.svg'">
@@ -244,9 +226,7 @@
         
         <div id="mensagemFeedback" class="mensagem"></div>
 
-        <select id="nomeFuncionario">
-            <!-- Gerado via Firebase -->
-        </select>
+        <select id="nomeFuncionario"></select>
 
         <div class="caixa-senha-ponto">
             <label for="senhaPonto">🔒 Palavra-passe de Segurança:</label>
@@ -271,21 +251,16 @@
                     <th>Saída</th>
                 </tr>
             </thead>
-            <tbody id="tabelaPrincipal">
-                <!-- Dados do Firebase -->
-            </tbody>
+            <tbody id="tabelaPrincipal"></tbody>
         </table>
 
         <button class="btn-admin" onclick="abrirModalAdmin()">⚙️ Administração</button>
     </div>
 
-    <!-- QUADRO DIREITO: HORAS DE PESQUISA -->
     <div class="quadro-lateral quadro-pesquisa">
         <h3>Equipa de Pesquisa</h3>
         <div class="data-range" id="dataRangePesquisa">A carregar datas...</div>
-        <ul class="lista-horas" id="listaHorasPesquisa">
-            <!-- Gerado via Firebase -->
-        </ul>
+        <ul class="lista-horas" id="listaHorasPesquisa"></ul>
     </div>
 
 </div> 
@@ -346,9 +321,7 @@
                 <th>Excluir</th>
             </tr>
         </thead>
-        <tbody id="tabelaGerirPessoas">
-            <!-- Gerida via Firebase -->
-        </tbody>
+        <tbody id="tabelaGerirPessoas"></tbody>
     </table>
 
     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
@@ -385,15 +358,13 @@
                 <th>Excluir</th>
             </tr>
         </thead>
-        <tbody id="tabelaAdmin">
-            <!-- Dados do Firebase -->
-        </tbody>
+        <tbody id="tabelaAdmin"></tbody>
     </table>
 
     <button class="btn-clear" onclick="limparHistorico()">⚠️ APAGAR TODO O HISTÓRICO DO SISTEMA</button>
 </div>
 
-<!-- ================= MODAL DE SENHA COM ANIMAÇÃO ================= -->
+<!-- ================= MODAL DE SENHA ================= -->
 <div id="modalSenha" class="modal-overlay">
     <div class="modal-box">
         <h3>⚙️ Acesso Administrativo</h3>
@@ -408,7 +379,7 @@
 
 <script>
     // ==========================================
-    // CONFIGURAÇÃO DO FIREBASE (HolocPonto)
+    // CONFIGURAÇÃO DO FIREBASE
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyBVXgtWCFlU3lcnOF0hPa_xVgzHxLRJq3I",
@@ -433,7 +404,10 @@
     let SENHA_ADMIN_ATUAL = 'holoc@canva2023';
     let DICA_SENHA_ATUAL = 'A MESMA SENHA DOS COMPUTADORES';
 
-    const LOCAL_PERMITIDO = { lat: -2.532979, lng: -44.299507, raioMetros: 150 };
+    // ==========================================
+    // 📍 GPS: ATUALIZADO PARA 800 METROS (Resolve problema indoor/desktop)
+    // ==========================================
+    const LOCAL_PERMITIDO = { lat: -2.532979, lng: -44.299507, raioMetros: 800 };
 
     function calcularDistancia(lat1, lon1, lat2, lon2) {
         const R = 6371e3; 
@@ -443,7 +417,7 @@
         const deltaLon = (lon2-lon1) * Math.PI/180;
         const a = Math.sin(deltaP/2) * Math.sin(deltaP/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(deltaLon/2) * Math.sin(deltaLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
+        return R * c; // Distância em metros
     }
 
     const funcionariosPadrao = [
@@ -545,8 +519,7 @@
             strIntervalo = `(de ${primeira} até ${ultima})`;
         }
         
-        txtDataExt.innerText = strIntervalo;
-        txtDataPesq.innerText = strIntervalo;
+        txtDataExt.innerText = strIntervalo; txtDataPesq.innerText = strIntervalo;
 
         const mapasMinutos = {};
         listaFuncionarios.forEach(f => { mapasMinutos[f.nome] = { equipe: f.equipe, minutos: 0 }; });
@@ -561,11 +534,10 @@
         const listExt = funcList.filter(f => f.equipe === 'Equipa de Extensão').sort((a,b) => a.nome.localeCompare(b.nome, 'pt', {sensitivity:'base'}));
         const listPes = funcList.filter(f => f.equipe === 'Equipa de Pesquisa').sort((a,b) => a.nome.localeCompare(b.nome, 'pt', {sensitivity:'base'}));
 
-        // Aplica um atraso (stagger) para a animação das listas ser mais fluida
         listExt.forEach((p, i) => {
             const li = document.createElement('li');
             li.title = p.nome; 
-            li.style.animationDelay = `${i * 0.05}s`; // Animação em cascata
+            li.style.animationDelay = `${i * 0.05}s`;
             li.innerHTML = `<span class="nome">${abreviarNome(p.nome)}</span> <span class="horas">${formatarMinutosParaHoras(p.minutos)}</span>`;
             ulExt.appendChild(li);
         });
@@ -657,16 +629,13 @@
             trDia.className = 'tr-dia-header';
             trDia.innerHTML = `<td colspan="3"><span class="toggle-icon">🔽</span> 📅 ${data}</td>`;
             
-            // ANIMAÇÃO DO ACORDEÃO (Setinha roda)
             trDia.onclick = function() {
                 const icon = this.querySelector('.toggle-icon');
                 const linhasDesteDia = document.querySelectorAll(`.grupo-dia-${indexDia}`);
                 let estaEscondido = linhasDesteDia[0].style.display === 'none';
                 
                 linhasDesteDia.forEach(linha => { linha.style.display = estaEscondido ? '' : 'none'; });
-                
-                if (estaEscondido) { icon.classList.remove('fechado'); } 
-                else { icon.classList.add('fechado'); }
+                if (estaEscondido) { icon.classList.remove('fechado'); } else { icon.classList.add('fechado'); }
             };
             tbody.appendChild(trDia);
 
@@ -702,65 +671,51 @@
         });
     }
 
-    // Função de mensagem atualizada para suportar animação e radar GPS
     function exibirMensagem(texto, tipo = 'sucesso') {
         const divMsg = document.getElementById('mensagemFeedback');
-        
-        // Remove classes antigas
         divMsg.classList.remove('sucesso', 'erro', 'radar-gps');
-        
-        // Adiciona a classe correspondente
         divMsg.classList.add(tipo);
-        
         divMsg.innerText = texto; 
         
-        // Força o reinício da animação CSS removendo e re-adicionando o display
         divMsg.style.display = 'none';
         void divMsg.offsetWidth; 
         divMsg.style.display = 'block';
 
-        // Só esconde automaticamente se não for o radar de busca do GPS
-        if(tipo !== 'radar-gps') {
-            setTimeout(() => { divMsg.style.display = 'none'; }, 5000);
-        }
+        if(tipo !== 'radar-gps') { setTimeout(() => { divMsg.style.display = 'none'; }, 6000); }
     }
 
     function registrarPonto(tipo) {
         const select = document.getElementById('nomeFuncionario');
         const nome = select.value;
-        if (!nome) {
-            exibirMensagem('❌ Por favor, selecione o seu nome na lista.', 'erro');
-            return;
-        }
+        if (!nome) { exibirMensagem('❌ Por favor, selecione o seu nome na lista.', 'erro'); return; }
 
         const senhaInserida = document.getElementById('senhaPonto').value;
-        if (senhaInserida !== SENHA_PONTO_ATUAL) { 
-            exibirMensagem('❌ Palavra-passe incorreta!', 'erro');
-            return; 
-        }
+        if (senhaInserida !== SENHA_PONTO_ATUAL) { exibirMensagem('❌ Palavra-passe incorreta!', 'erro'); return; }
 
-        if (!navigator.geolocation) {
-            exibirMensagem('⚠️ O seu navegador/telemóvel não suporta GPS.', 'erro');
-            return;
-        }
+        if (!navigator.geolocation) { exibirMensagem('⚠️ O seu navegador/telemóvel não suporta GPS.', 'erro'); return; }
 
-        // Chama a mensagem de Radar Animado
         exibirMensagem(`📡 A verificar a sua localização por satélite...`, 'radar-gps');
 
+        // Adicionado Timeout prolongado e ignorância do cache (maximumAge: 0)
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const latAtual = position.coords.latitude;
                 const lngAtual = position.coords.longitude;
+                
                 const distancia = calcularDistancia(latAtual, lngAtual, LOCAL_PERMITIDO.lat, LOCAL_PERMITIDO.lng);
 
                 if (distancia > LOCAL_PERMITIDO.raioMetros) {
-                    exibirMensagem(`❌ BLOQUEADO: Está fora do perímetro da Fábrica Santa Amélia!`, 'erro');
+                    exibirMensagem(`❌ BLOQUEADO: O sistema detetou-o a ${Math.round(distancia)}m de distância (Limite: ${LOCAL_PERMITIDO.raioMetros}m). Se estiver no HOLOC, chegue perto de uma janela ou ligue o Wi-Fi!`, 'erro');
                     return;
                 }
                 processarRegistroPonto(nome, tipo);
             },
-            (error) => { exibirMensagem('❌ Erro no GPS: Ligue a localização e dê permissão!', 'erro'); },
-            { enableHighAccuracy: true }
+            (error) => { 
+                let msg = '❌ Erro no GPS: Ligue a localização e dê permissão!';
+                if(error.code === 3) msg = '❌ Erro: O GPS demorou muito a responder. Tente novamente em alguns segundos.';
+                exibirMensagem(msg, 'erro'); 
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
     }
 
@@ -774,10 +729,7 @@
 
         if (registroHoje) {
             if (tipo === 'Entrada') {
-                if (registroHoje.entrada !== '--') {
-                    exibirMensagem(`⚠️ Entrada já registada hoje.`, 'erro');
-                    return;
-                }
+                if (registroHoje.entrada !== '--') { exibirMensagem(`⚠️ Entrada já registada hoje.`, 'erro'); return; }
                 dbRegistros.child(registroHoje.id).update({ entrada: horaStr });
             } else { dbRegistros.child(registroHoje.id).update({ saida: horaStr }); }
         } else {
@@ -800,16 +752,13 @@
         }
     }
 
-    // Modal agora animado com classes CSS em vez de inline-styles
     function abrirModalAdmin() {
         document.getElementById('inputSenhaModal').value = '';
         document.getElementById('modalSenha').classList.add('active');
         setTimeout(() => document.getElementById('inputSenhaModal').focus(), 100);
     }
     
-    function fecharModalAdmin() {
-        document.getElementById('modalSenha').classList.remove('active');
-    }
+    function fecharModalAdmin() { document.getElementById('modalSenha').classList.remove('active'); }
 
     function verificarSenhaAdmin() {
         if (document.getElementById('inputSenhaModal').value === SENHA_ADMIN_ATUAL) {
