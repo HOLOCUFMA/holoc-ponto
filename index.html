@@ -14,171 +14,312 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <style>
+        /* ================= ANIMAÇÕES GLOBAIS ================= */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulseGPS {
+            0% { box-shadow: 0 0 0 0 rgba(2, 136, 209, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(2, 136, 209, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(2, 136, 209, 0); }
+        }
+        @keyframes slideDownMsg {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #121212; 
             color: #e0e0e0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
             padding: 40px 20px; 
             margin: 0;
-        }
-        .container { 
-            background-color: #1e1e1e; 
-            padding: 30px; 
-            border-radius: 8px; 
-            width: 100%; 
-            max-width: 700px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6); 
-            margin-bottom: 20px;
-            border-top: 4px solid #ff3d00; 
-        }
-        
-        .logo-container {
-            text-align: center;
-            margin-bottom: 25px;
-            background-color: #282828;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #333;
-        }
-        .logo-container img {
-            width: 220px;
-            height: 75px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
+            overflow-x: hidden; /* Evita scroll horizontal indesejado nas animações */
         }
 
+        /* ESTRUTURA DE 3 COLUNAS */
+        .main-layout {
+            display: flex; justify-content: center; align-items: flex-start;
+            gap: 25px; width: 100%; max-width: 1350px; margin: 0 auto;
+        }
+
+        /* ANIMAÇÃO DE ENTRADA DOS PAINEIS */
+        .container { 
+            background-color: #1e1e1e; padding: 30px; border-radius: 12px; 
+            width: 100%; max-width: 700px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.8); 
+            margin-bottom: 20px; border-top: 4px solid #ff3d00; 
+            flex: 2;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        
+        .quadro-lateral {
+            flex: 1; background-color: #1a1a1a; padding: 20px; border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.8); min-width: 250px;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0; /* Para começar invisível antes da animação */
+        }
+        
+        /* Efeito escadinha (stagger) na entrada */
+        .quadro-extensao { border-top: 4px solid #ff9100; animation-delay: 0.1s; }
+        .quadro-pesquisa { border-top: 4px solid #4caf50; animation-delay: 0.2s; }
+        
+        .quadro-lateral h3 { margin-top: 0; margin-bottom: 5px; font-size: 18px; transition: color 0.3s; }
+        .quadro-extensao h3 { color: #ff9100; }
+        .quadro-pesquisa h3 { color: #4caf50; }
+
+        .data-range { font-size: 11px; color: #888; text-align: center; margin-bottom: 15px; font-style: italic; }
+
+        /* LISTA INTERATIVA DO PLACAR DE HORAS */
+        .lista-horas { list-style: none; padding: 0; margin: 0; }
+        .lista-horas li {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            animation: slideInRight 0.5s ease forwards;
+        }
+        .lista-horas li:last-child { border-bottom: none; }
+        
+        /* O Efeito "Vivo" de Hover na Leaderboard */
+        .quadro-extensao .lista-horas li:hover { 
+            transform: translateX(8px) scale(1.02); 
+            background-color: rgba(255, 145, 0, 0.1); 
+            box-shadow: -4px 0 0 #ff9100;
+        }
+        .quadro-pesquisa .lista-horas li:hover { 
+            transform: translateX(8px) scale(1.02); 
+            background-color: rgba(76, 175, 80, 0.1); 
+            box-shadow: -4px 0 0 #4caf50;
+        }
+
+        .lista-horas .nome { color: #e0e0e0; font-weight: 500; cursor: help; transition: color 0.3s; }
+        .quadro-extensao .lista-horas li:hover .nome { color: #ff9100; }
+        .quadro-pesquisa .lista-horas li:hover .nome { color: #4caf50; }
+
+        .lista-horas .horas {
+            font-weight: bold; color: #90caf9; font-family: monospace;
+            background-color: #252525; padding: 4px 8px; border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+        .lista-horas li:hover .horas { transform: scale(1.1); }
+
+        @media (max-width: 1100px) {
+            .main-layout { flex-direction: column; align-items: center; }
+            .quadro-lateral { width: 100%; max-width: 700px; box-sizing: border-box; }
+        }
+
+        .logo-container { text-align: center; margin-bottom: 25px; background-color: #282828; padding: 15px; border-radius: 8px; border: 1px solid #333; transition: transform 0.3s; }
+        .logo-container:hover { transform: scale(1.02); }
+        .logo-container img { width: 220px; height: 75px; object-fit: contain; display: block; margin: 0 auto; }
+        
         h2, h3 { text-align: center; margin-bottom: 20px; color: #ffffff; }
         
+        /* INPUTS E SELECTS COM EFEITO GLOW (NEON) */
         select, input[type="text"], input[type="password"], input[type="date"], input[type="time"] { 
-            width: calc(100% - 24px); 
-            padding: 12px; 
-            margin-bottom: 15px; 
-            border: 1px solid #333; 
-            border-radius: 4px; 
-            background-color: #2c2c2c; 
-            color: #fff; 
-            font-size: 16px;
+            width: calc(100% - 24px); padding: 12px; margin-bottom: 15px; border: 1px solid #444; 
+            border-radius: 6px; background-color: #252525; color: #fff; font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        select:focus, input:focus { outline: none; border-color: #ff3d00; }
+        select:focus, input:focus { 
+            outline: none; border-color: #ff9100; 
+            box-shadow: 0 0 12px rgba(255, 145, 0, 0.3);
+            background-color: #2a2a2a;
+            transform: translateY(-2px);
+        }
+        
+        .caixa-senha-ponto { background-color: #202020; padding: 15px; border-radius: 8px; border: 1px dashed #ff9100; margin-bottom: 20px; text-align: left; transition: all 0.3s; }
+        .caixa-senha-ponto:hover { border-style: solid; background-color: #252525; box-shadow: 0 4px 15px rgba(255,145,0,0.1); }
+        .caixa-senha-ponto label { display: block; color: #ff9100; font-size: 13px; font-weight: bold; margin-bottom: 8px; }
+        .caixa-senha-ponto input { margin-bottom: 0; border-color: #555; }
         
         optgroup { background-color: #1e1e1e; color: #aaa; font-weight: bold; }
         option { background-color: #2c2c2c; color: #fff; }
 
+        /* BOTÕES 3D INTERATIVOS */
         .buttons { display: flex; gap: 15px; margin-bottom: 15px; }
         button { 
-            flex: 1; padding: 12px; border: none; border-radius: 4px; 
-            cursor: pointer; font-weight: bold; font-size: 15px; transition: opacity 0.2s;
+            flex: 1; padding: 14px; border: none; border-radius: 6px; 
+            cursor: pointer; font-weight: bold; font-size: 15px; 
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative; overflow: hidden;
         }
-        button:hover { opacity: 0.85; }
+        button:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 8px 20px rgba(0,0,0,0.5); filter: brightness(1.1); }
+        button:active { transform: translateY(2px) scale(0.98); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        
         .btn-in { background-color: #2e7d32; color: white; }
         .btn-out { background-color: #c62828; color: white; }
         .btn-export { background-color: #1b5e20; color: white; margin-bottom: 15px; width: 100%; font-size: 14px; }
         .btn-clear { background-color: #c62828; color: white; width: 100%; margin-top: 15px; }
-        .btn-admin { background-color: #2c2c2c; color: #ff9100; width: 100%; font-size: 13px; margin-top: 20px; border: 1px solid #ff9100; }
+        .btn-admin { background-color: transparent; color: #ff9100; width: 100%; font-size: 13px; margin-top: 20px; border: 1px solid #ff9100; }
+        .btn-admin:hover { background-color: rgba(255,145,0,0.1); }
         .btn-voltar { background-color: #424242; color: white; width: 100%; margin-bottom: 20px; }
         .btn-add { background-color: #ff9100; color: #000; width: 100%; margin-bottom: 15px; font-weight: bold; }
+        .btn-save { background-color: #0288d1; color: white; width: 100%; margin-bottom: 15px; font-weight: bold; }
 
-        .mensagem {
-            display: none; padding: 10px; margin-bottom: 15px; border-radius: 4px;
-            text-align: center; font-weight: bold;
+        /* MENSAGENS COM ANIMAÇÃO SLIDE E RADAR */
+        .mensagem { 
+            display: none; padding: 12px; margin-bottom: 15px; border-radius: 6px; 
+            text-align: center; font-weight: bold; font-size: 15px;
+            animation: slideDownMsg 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
-        .sucesso { background-color: #1b5e20; color: #4caf50; }
+        .sucesso { background-color: rgba(76, 175, 80, 0.2); border: 1px solid #4caf50; color: #4caf50; }
+        .erro { background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: #f44336; }
+        .radar-gps { 
+            background-color: #0288d1; color: white; border: none;
+            animation: pulseGPS 1.5s infinite; 
+        }
 
+        /* TABELAS INTERATIVAS */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; text-align: center; }
-        th, td { border-bottom: 1px solid #333; padding: 12px 8px; }
-        th { background-color: #2c2c2c; color: #aaa; font-weight: normal; }
-        tr:hover { background-color: #252525; }
+        th, td { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 8px; transition: background-color 0.2s; }
+        th { background-color: #222; color: #aaa; font-weight: 600; letter-spacing: 1px; }
+        tr:hover td { background-color: rgba(255,255,255,0.03); }
         .vazio { text-align: center; color: #777; font-style: italic; }
         .hora { font-family: monospace; font-size: 15px; color: #90caf9; }
 
-        .tr-dia-header { background-color: #282828; color: #ff9100; font-weight: bold; text-align: left; font-size: 15px; cursor: pointer; }
-        .tr-dia-header:hover { background-color: #333333; }
-        .tr-dia-header td { border-top: 2px solid #ff9100; border-bottom: 1px solid #444; }
+        .tr-dia-header { background-color: #252525; color: #ff9100; font-weight: bold; text-align: left; font-size: 15px; cursor: pointer; transition: all 0.3s; }
+        .tr-dia-header:hover { background-color: #2d2d2d; transform: scale(1.01); box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10; position: relative; }
+        .tr-dia-header td { border-top: 2px solid #ff9100; border-bottom: none; border-radius: 6px 6px 0 0; }
+        
+        /* ANIMAÇÃO DA SETINHA DO ACORDEÃO */
+        .toggle-icon { display: inline-block; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); margin-right: 5px; }
+        .toggle-icon.fechado { transform: rotate(-90deg); }
+
         .tr-equipe-header { background-color: #1a1a1a; color: #b0bec5; font-size: 12px; text-transform: uppercase; font-weight: bold; }
         .tr-equipe-header td { padding: 8px 10px 8px 30px; border-bottom: 1px solid #222; }
 
-        .admin-table td { padding: 5px; }
-        .admin-table input[type="text"] {
-            width: 100%; padding: 8px; margin: 0; border: 1px dashed #555; 
-            background-color: transparent; color: #90caf9; font-family: monospace; font-size: 14px;
+        /* MODAL CINEMATOGRÁFICO */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; 
+            opacity: 0; visibility: hidden; transition: all 0.4s ease;
         }
-        .admin-table input[type="text"]:focus { background-color: #333; border-style: solid; border-color: #ff9100; }
-        .btn-del { background-color: transparent; color: #ff5252; padding: 5px; font-size: 16px; border: none; cursor: pointer; }
-        .btn-del:hover { background-color: #333; }
-
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); justify-content: center; align-items: center; z-index: 1000;
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-box { 
+            background: #1e1e1e; padding: 30px; border-radius: 12px; max-width: 380px; width: 90%; 
+            text-align: center; border: 1px solid #444; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transform: scale(0.8) translateY(-30px); opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .modal-box { background: #1e1e1e; padding: 25px; border-radius: 8px; max-width: 380px; width: 90%; text-align: center; border: 1px solid #333; }
-        .modal-box h3 { margin-top: 0; color: #ff9100; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); opacity: 1; }
+        
+        .modal-box h3 { margin-top: 0; color: #ff9100; font-size: 22px; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
         
         .form-manual { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .form-manual select { grid-column: span 2; }
+        .btn-del { background-color: transparent; color: #ff5252; padding: 8px; font-size: 16px; border: none; cursor: pointer; border-radius: 50%; transition: all 0.2s; }
+        .btn-del:hover { background-color: rgba(255, 82, 82, 0.2); transform: scale(1.2); }
     </style>
 </head>
 <body>
 
-<!-- ================= PAINEL PRINCIPAL (PÚBLICO) ================= -->
-<div id="painelPrincipal" class="container">
-    <div class="logo-container">
-        <img src="imagens/logo.svg" alt="Logótipo Holoc">
-    </div>
+<!-- ENVOLTÓRIO PRINCIPAL PARA AS 3 COLUNAS -->
+<div class="main-layout" id="layoutPrincipal">
     
-    <h2>Sistema de Chamada e Ponto</h2>
-    
-    <div id="mensagemFeedback" class="mensagem sucesso"></div>
-
-    <select id="nomeFuncionario">
-        <!-- Gerado via Firebase e ORDENADO ALFABETICAMENTE -->
-    </select>
-
-    <input type="password" id="senhaPonto" placeholder="A MESMA SENHA DOS COMPUTADORES">
-    
-    <div class="buttons">
-        <button class="btn-in" onclick="registrarPonto('Entrada')">Registar Entrada</button>
-        <button class="btn-out" onclick="registrarPonto('Saída')">Registar Saída</button>
+    <!-- QUADRO ESQUERDO: HORAS DE EXTENSÃO -->
+    <div class="quadro-lateral quadro-extensao">
+        <h3>Equipa de Extensão</h3>
+        <div class="data-range" id="dataRangeExtensao">A carregar datas...</div>
+        <ul class="lista-horas" id="listaHorasExtensao">
+            <!-- Gerado via Firebase -->
+        </ul>
     </div>
 
-    <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;">
+    <!-- PAINEL CENTRAL: CHAMADA -->
+    <div id="painelPrincipal" class="container" style="margin-bottom: 0;">
+        <div class="logo-container">
+            <img src="imagens/logo.svg" alt="Logótipo Holoc" onerror="this.src='logo.svg'">
+        </div>
+        
+        <h2>Sistema de Chamada e Ponto</h2>
+        
+        <div id="mensagemFeedback" class="mensagem"></div>
 
-    <h3>Histórico de Registos</h3>
-    <input type="text" id="buscaNome" placeholder="Pesquisar no histórico por nome..." onkeyup="atualizarTabelaPrincipal()">
+        <select id="nomeFuncionario">
+            <!-- Gerado via Firebase -->
+        </select>
 
-    <table>
-        <thead>
-            <tr>
-                <th style="text-align: left; padding-left: 30px;">Nome</th>
-                <th>Entrada</th>
-                <th>Saída</th>
-            </tr>
-        </thead>
-        <tbody id="tabelaPrincipal">
-            <!-- Dados do Firebase ORDENADOS ALFABETICAMENTE -->
-        </tbody>
-    </table>
+        <div class="caixa-senha-ponto">
+            <label for="senhaPonto">🔒 Palavra-passe de Segurança:</label>
+            <input type="password" id="senhaPonto" placeholder="A carregar dica...">
+        </div>
+        
+        <div class="buttons">
+            <button class="btn-in" onclick="registrarPonto('Entrada')">Registar Entrada</button>
+            <button class="btn-out" onclick="registrarPonto('Saída')">Registar Saída</button>
+        </div>
 
-    <button class="btn-admin" onclick="abrirModalAdmin()">⚙️ Administração</button>
-</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;">
 
-<!-- ================= PAINEL DE ADMINISTRAÇÃO (OCULTO) ================= -->
-<div id="painelAdmin" class="container" style="display: none; max-width: 900px;">
+        <h3>Histórico de Registos</h3>
+        <input type="text" id="buscaNome" placeholder="🔍 Pesquisar no histórico por nome..." onkeyup="atualizarTabelaPrincipal()">
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: left; padding-left: 30px;">Nome</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaPrincipal">
+                <!-- Dados do Firebase -->
+            </tbody>
+        </table>
+
+        <button class="btn-admin" onclick="abrirModalAdmin()">⚙️ Administração</button>
+    </div>
+
+    <!-- QUADRO DIREITO: HORAS DE PESQUISA -->
+    <div class="quadro-lateral quadro-pesquisa">
+        <h3>Equipa de Pesquisa</h3>
+        <div class="data-range" id="dataRangePesquisa">A carregar datas...</div>
+        <ul class="lista-horas" id="listaHorasPesquisa">
+            <!-- Gerado via Firebase -->
+        </ul>
+    </div>
+
+</div> 
+
+
+<!-- ================= PAINEL DE ADMINISTRAÇÃO ================= -->
+<div id="painelAdmin" class="container" style="display: none; max-width: 900px; margin: 0 auto; animation: fadeUp 0.5s ease-out forwards;">
     <button class="btn-voltar" onclick="fecharAdmin()">⬅️ Voltar para o Ecrã Inicial</button>
     
     <div class="logo-container">
-        <img src="imagens/logo.svg" alt="Logótipo Holoc">
+        <img src="imagens/logo.svg" alt="Logótipo Holoc" onerror="this.src='logo.svg'">
     </div>
 
     <h2 style="color: #ff9100;">Painel de Administração</h2>
 
     <button class="btn-export" onclick="exportarExcelFormatado()">📊 Descarregar Relatório de Frequência (Excel Oficial)</button>
 
-    <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;">
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
+
+    <h3>🔑 Gestão de Palavras-Passe</h3>
+    <div class="caixa-senha-ponto" style="border-color: #0288d1;">
+        <label style="color: #0288d1;">Senha exigida para bater o Ponto (Equipa):</label>
+        <input type="text" id="novaSenhaPontoAdmin" placeholder="Digite a nova senha de Ponto">
+        
+        <label style="color: #0288d1; margin-top: 10px;">Dica da Senha (Aparece no campo de Ponto):</label>
+        <input type="text" id="novaDicaSenhaAdmin" placeholder="Ex: A MESMA SENHA DOS COMPUTADORES">
+
+        <label style="color: #0288d1; margin-top: 10px;">Senha Mestra (Acesso a este Painel de Administração):</label>
+        <input type="text" id="novaSenhaAdminMestra" placeholder="Digite a nova senha de Admin">
+        
+        <button class="btn-save" style="margin-top: 15px; margin-bottom: 0;" onclick="salvarNovasSenhas()">💾 Guardar Novas Senhas e Dica</button>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
 
     <h3>👥 Gerir Nomes da Lista</h3>
     <div class="form-manual">
@@ -206,17 +347,15 @@
             </tr>
         </thead>
         <tbody id="tabelaGerirPessoas">
-            <!-- Gerida via Firebase ORDENADA ALFABETICAMENTE -->
+            <!-- Gerida via Firebase -->
         </tbody>
     </table>
 
-    <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;">
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
 
     <h3>➕ Inserir Ponto Manualmente</h3>
     <div class="form-manual">
-        <select id="adminNomeFuncionario">
-            <!-- Copiado do Firebase ORDENADO ALFABETICAMENTE -->
-        </select>
+        <select id="adminNomeFuncionario"></select>
         <div>
             <label style="font-size: 12px; color: #aaa;">Data do Ponto:</label>
             <input type="date" id="adminData">
@@ -233,11 +372,9 @@
     </div>
     <button class="btn-add" onclick="adicionarRegistroManual()">Adicionar Registo na Chamada (Sem GPS)</button>
 
-    <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;">
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
 
     <h3>✏️ Editar Histórico de Registos</h3>
-    <p style="font-size: 12px; color: #aaa; text-align: center;">Clique em qualquer data ou horário abaixo e digite para corrigir. Grava automaticamente.</p>
-    
     <table class="admin-table">
         <thead>
             <tr>
@@ -256,15 +393,15 @@
     <button class="btn-clear" onclick="limparHistorico()">⚠️ APAGAR TODO O HISTÓRICO DO SISTEMA</button>
 </div>
 
-<!-- ================= MODAL DE SENHA ================= -->
+<!-- ================= MODAL DE SENHA COM ANIMAÇÃO ================= -->
 <div id="modalSenha" class="modal-overlay">
     <div class="modal-box">
         <h3>⚙️ Acesso Administrativo</h3>
-        <p>Digite a palavra-passe para aceder ao painel de edições e relatórios:</p>
+        <p style="margin-bottom: 20px;">Digite a palavra-passe para aceder ao painel de edições e relatórios:</p>
         <input type="password" id="inputSenhaModal" placeholder="Palavra-passe..." autocomplete="off">
         <div class="modal-buttons">
-            <button style="background-color: #424242; color: white;" onclick="document.getElementById('modalSenha').style.display = 'none';">Cancelar</button>
-            <button style="background-color: #ff9100; color: black; font-weight: bold;" onclick="verificarSenha()">Entrar</button>
+            <button style="background-color: #444; color: white;" onclick="fecharModalAdmin()">Cancelar</button>
+            <button style="background-color: #ff9100; color: black; font-weight: bold;" onclick="verificarSenhaAdmin()">Entrar</button>
         </div>
     </div>
 </div>
@@ -287,18 +424,16 @@
     const db = firebase.database();
     const dbFuncionarios = db.ref('funcionarios');
     const dbRegistros = db.ref('registros');
+    const dbConfig = db.ref('configuracoes'); 
 
     let listaFuncionarios = [];
     let registros = [];
+    
+    let SENHA_PONTO_ATUAL = 'holocufma';
+    let SENHA_ADMIN_ATUAL = 'holoc@canva2023';
+    let DICA_SENHA_ATUAL = 'A MESMA SENHA DOS COMPUTADORES';
 
-    // ==========================================
-    // 📍 CONFIGURAÇÃO DO GPS (FÁBRICA SANTA AMÉLIA)
-    // ==========================================
-    const LOCAL_PERMITIDO = {
-        lat: -2.532979,
-        lng: -44.299507,
-        raioMetros: 150
-    };
+    const LOCAL_PERMITIDO = { lat: -2.532979, lng: -44.299507, raioMetros: 150 };
 
     function calcularDistancia(lat1, lon1, lat2, lon2) {
         const R = 6371e3; 
@@ -330,12 +465,29 @@
         { nome: "Visitante", equipe: "Visitantes e Outros" }
     ];
 
+    dbConfig.on('value', (snapshot) => {
+        const conf = snapshot.val();
+        if (conf) {
+            if (conf.senhaPonto) SENHA_PONTO_ATUAL = conf.senhaPonto;
+            if (conf.senhaAdmin) SENHA_ADMIN_ATUAL = conf.senhaAdmin;
+            if (conf.dicaSenha) DICA_SENHA_ATUAL = conf.dicaSenha;
+            
+            document.getElementById('novaSenhaPontoAdmin').value = SENHA_PONTO_ATUAL;
+            document.getElementById('novaSenhaAdminMestra').value = SENHA_ADMIN_ATUAL;
+            document.getElementById('novaDicaSenhaAdmin').value = DICA_SENHA_ATUAL;
+            document.getElementById('senhaPonto').placeholder = DICA_SENHA_ATUAL;
+        } else {
+            dbConfig.set({ senhaPonto: SENHA_PONTO_ATUAL, senhaAdmin: SENHA_ADMIN_ATUAL, dicaSenha: DICA_SENHA_ATUAL });
+        }
+    });
+
     dbFuncionarios.on('value', (snapshot) => {
         const data = snapshot.val();
         if (!data) { funcionariosPadrao.forEach(f => dbFuncionarios.push(f)); return; }
         listaFuncionarios = [];
         for (let id in data) { listaFuncionarios.push({ id: id, ...data[id] }); }
         atualizarDropdowns();
+        atualizarPlacaresDeHoras(); 
     });
 
     dbRegistros.on('value', (snapshot) => {
@@ -343,8 +495,89 @@
         registros = [];
         if (data) { for (let id in data) { registros.push({ id: id, ...data[id] }); } }
         atualizarTabelaPrincipal();
+        atualizarPlacaresDeHoras(); 
         if (document.getElementById('painelAdmin').style.display === 'block') { atualizarTabelaAdmin(); }
     });
+
+    function abreviarNome(nomeCompleto) {
+        const partes = nomeCompleto.trim().split(' ');
+        if(partes.length === 1) return partes[0];
+        return `${partes[0]} ${partes[partes.length - 1]}`;
+    }
+
+    function calcularMinutos(entrada, saida) {
+        if (!entrada || !saida || entrada === '--' || saida === '--') return 0;
+        const [h1, m1] = entrada.split(':').map(Number);
+        const [h2, m2] = saida.split(':').map(Number);
+        const minEntrada = (h1 * 60) + (m1 || 0);
+        const minSaida = (h2 * 60) + (m2 || 0);
+        let diff = minSaida - minEntrada;
+        if (diff < 0) diff += 24 * 60;
+        return diff;
+    }
+
+    function formatarMinutosParaHoras(totalMinutos) {
+        if(totalMinutos === 0) return "0H00M";
+        const h = Math.floor(totalMinutos / 60);
+        const m = totalMinutos % 60;
+        return `${String(h).padStart(2, '0')}H${String(m).padStart(2, '0')}M`;
+    }
+
+    function atualizarPlacaresDeHoras() {
+        const ulExt = document.getElementById('listaHorasExtensao');
+        const ulPesq = document.getElementById('listaHorasPesquisa');
+        const txtDataExt = document.getElementById('dataRangeExtensao');
+        const txtDataPesq = document.getElementById('dataRangePesquisa');
+
+        ulExt.innerHTML = ''; ulPesq.innerHTML = '';
+
+        const datas = registros.map(r => r.data).filter(d => d).map(d => {
+            const parts = d.split(', ')[1];
+            if(!parts) return null;
+            const [dia, mes, ano] = parts.split('/');
+            return { original: d, dateObj: new Date(ano, mes-1, dia) };
+        }).filter(d => d !== null).sort((a,b) => a.dateObj - b.dateObj);
+
+        let strIntervalo = "(Sem registos)";
+        if(datas.length > 0) {
+            const primeira = datas[0].original.split(', ')[1];
+            const ultima = datas[datas.length - 1].original.split(', ')[1];
+            strIntervalo = `(de ${primeira} até ${ultima})`;
+        }
+        
+        txtDataExt.innerText = strIntervalo;
+        txtDataPesq.innerText = strIntervalo;
+
+        const mapasMinutos = {};
+        listaFuncionarios.forEach(f => { mapasMinutos[f.nome] = { equipe: f.equipe, minutos: 0 }; });
+
+        registros.forEach(r => {
+            let eq = r.equipe || descobrirEquipe(r.nome);
+            if (!mapasMinutos[r.nome]) mapasMinutos[r.nome] = { equipe: eq, minutos: 0 };
+            mapasMinutos[r.nome].minutos += calcularMinutos(r.entrada, r.saida);
+        });
+
+        const funcList = Object.keys(mapasMinutos).map(n => ({ nome: n, ...mapasMinutos[n] }));
+        const listExt = funcList.filter(f => f.equipe === 'Equipa de Extensão').sort((a,b) => a.nome.localeCompare(b.nome, 'pt', {sensitivity:'base'}));
+        const listPes = funcList.filter(f => f.equipe === 'Equipa de Pesquisa').sort((a,b) => a.nome.localeCompare(b.nome, 'pt', {sensitivity:'base'}));
+
+        // Aplica um atraso (stagger) para a animação das listas ser mais fluida
+        listExt.forEach((p, i) => {
+            const li = document.createElement('li');
+            li.title = p.nome; 
+            li.style.animationDelay = `${i * 0.05}s`; // Animação em cascata
+            li.innerHTML = `<span class="nome">${abreviarNome(p.nome)}</span> <span class="horas">${formatarMinutosParaHoras(p.minutos)}</span>`;
+            ulExt.appendChild(li);
+        });
+
+        listPes.forEach((p, i) => {
+            const li = document.createElement('li');
+            li.title = p.nome;
+            li.style.animationDelay = `${i * 0.05}s`;
+            li.innerHTML = `<span class="nome">${abreviarNome(p.nome)}</span> <span class="horas">${formatarMinutosParaHoras(p.minutos)}</span>`;
+            ulPesq.appendChild(li);
+        });
+    }
 
     function atualizarDropdowns() {
         const selectPrincipal = document.getElementById('nomeFuncionario');
@@ -357,10 +590,7 @@
             grupos[f.equipe].push(f.nome);
         });
 
-        // 1. ORDENAÇÃO ALFABÉTICA (A-Z) NOS MENUS (SELECT)
-        for (let equipe in grupos) {
-            grupos[equipe].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' }));
-        }
+        for (let equipe in grupos) { grupos[equipe].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' })); }
 
         for (let equipe in grupos) {
             html += `<optgroup label="${equipe}">`;
@@ -368,16 +598,13 @@
             html += `</optgroup>`;
         }
 
-        selectPrincipal.innerHTML = html;
-        selectAdmin.innerHTML = html;
+        selectPrincipal.innerHTML = html; selectAdmin.innerHTML = html;
         atualizarTabelaGerirPessoas();
     }
 
     function atualizarTabelaGerirPessoas() {
         const tbody = document.getElementById('tabelaGerirPessoas');
         tbody.innerHTML = '';
-        
-        // 2. ORDENAÇÃO ALFABÉTICA (A-Z) NA TABELA DE GESTÃO DO ADMIN
         const listaOrdenada = [...listaFuncionarios].sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
 
         listaOrdenada.forEach(pessoa => {
@@ -401,9 +628,7 @@
         alert(`✅ ${nome} adicionado(a) com sucesso!`);
     }
 
-    function removerPessoa(id, nome) {
-        if (confirm(`Tem a certeza que deseja remover ${nome} da lista de chamadas?`)) dbFuncionarios.child(id).remove();
-    }
+    function removerPessoa(id, nome) { if (confirm(`Tem a certeza que deseja remover ${nome} da lista?`)) dbFuncionarios.child(id).remove(); }
 
     function descobrirEquipe(nomeBuscado) {
         const pessoa = listaFuncionarios.find(p => p.nome === nomeBuscado);
@@ -431,12 +656,17 @@
             const trDia = document.createElement('tr');
             trDia.className = 'tr-dia-header';
             trDia.innerHTML = `<td colspan="3"><span class="toggle-icon">🔽</span> 📅 ${data}</td>`;
+            
+            // ANIMAÇÃO DO ACORDEÃO (Setinha roda)
             trDia.onclick = function() {
                 const icon = this.querySelector('.toggle-icon');
                 const linhasDesteDia = document.querySelectorAll(`.grupo-dia-${indexDia}`);
                 let estaEscondido = linhasDesteDia[0].style.display === 'none';
+                
                 linhasDesteDia.forEach(linha => { linha.style.display = estaEscondido ? '' : 'none'; });
-                icon.innerText = estaEscondido ? '🔽' : '▶️';
+                
+                if (estaEscondido) { icon.classList.remove('fechado'); } 
+                else { icon.classList.add('fechado'); }
             };
             tbody.appendChild(trDia);
 
@@ -451,8 +681,7 @@
             const ordemEquipes = ['Equipa de Pesquisa', 'Equipa de Extensão', 'Visitantes e Outros'];
             const equipesPresentes = Object.keys(gruposPorEquipe).sort((a, b) => {
                 let posA = ordemEquipes.indexOf(a); let posB = ordemEquipes.indexOf(b);
-                if (posA === -1) posA = 99; if (posB === -1) posB = 99;
-                return posA - posB;
+                if (posA === -1) posA = 99; if (posB === -1) posB = 99; return posA - posB;
             });
 
             equipesPresentes.forEach(eq => {
@@ -461,7 +690,6 @@
                 trEq.innerHTML = `<td colspan="3" style="text-align: left;">🔹 ${eq}</td>`;
                 tbody.appendChild(trEq);
                 
-                // 3. ORDENAÇÃO ALFABÉTICA (A-Z) NO HISTÓRICO DA PÁGINA INICIAL
                 gruposPorEquipe[eq].sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
 
                 gruposPorEquipe[eq].forEach(registro => {
@@ -474,25 +702,50 @@
         });
     }
 
-    function exibirMensagem(texto) {
+    // Função de mensagem atualizada para suportar animação e radar GPS
+    function exibirMensagem(texto, tipo = 'sucesso') {
         const divMsg = document.getElementById('mensagemFeedback');
-        divMsg.innerText = texto; divMsg.style.display = 'block';
-        setTimeout(() => { divMsg.style.display = 'none'; }, 5000);
+        
+        // Remove classes antigas
+        divMsg.classList.remove('sucesso', 'erro', 'radar-gps');
+        
+        // Adiciona a classe correspondente
+        divMsg.classList.add(tipo);
+        
+        divMsg.innerText = texto; 
+        
+        // Força o reinício da animação CSS removendo e re-adicionando o display
+        divMsg.style.display = 'none';
+        void divMsg.offsetWidth; 
+        divMsg.style.display = 'block';
+
+        // Só esconde automaticamente se não for o radar de busca do GPS
+        if(tipo !== 'radar-gps') {
+            setTimeout(() => { divMsg.style.display = 'none'; }, 5000);
+        }
     }
 
     function registrarPonto(tipo) {
         const select = document.getElementById('nomeFuncionario');
         const nome = select.value;
-        if (!nome) return alert('Por favor, selecione o seu nome na lista.');
-
-        const senhaInserida = document.getElementById('senhaPonto').value;
-        if (senhaInserida !== 'holocufma') {
-            return alert('❌ Palavra-passe incorreta! Apenas membros da equipa HOLOC podem registar o ponto.');
+        if (!nome) {
+            exibirMensagem('❌ Por favor, selecione o seu nome na lista.', 'erro');
+            return;
         }
 
-        if (!navigator.geolocation) return alert('⚠️ O seu navegador/telemóvel não suporta GPS. Não é possível registar o ponto.');
+        const senhaInserida = document.getElementById('senhaPonto').value;
+        if (senhaInserida !== SENHA_PONTO_ATUAL) { 
+            exibirMensagem('❌ Palavra-passe incorreta!', 'erro');
+            return; 
+        }
 
-        exibirMensagem(`📡 A verificar a sua localização GPS... Aguarde.`);
+        if (!navigator.geolocation) {
+            exibirMensagem('⚠️ O seu navegador/telemóvel não suporta GPS.', 'erro');
+            return;
+        }
+
+        // Chama a mensagem de Radar Animado
+        exibirMensagem(`📡 A verificar a sua localização por satélite...`, 'radar-gps');
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -500,10 +753,13 @@
                 const lngAtual = position.coords.longitude;
                 const distancia = calcularDistancia(latAtual, lngAtual, LOCAL_PERMITIDO.lat, LOCAL_PERMITIDO.lng);
 
-                if (distancia > LOCAL_PERMITIDO.raioMetros) return alert(`❌ PONTO BLOQUEADO: Está a ${Math.round(distancia)} metros de distância da sede. Precisa estar na Fábrica Santa Amélia para registar o ponto!`);
+                if (distancia > LOCAL_PERMITIDO.raioMetros) {
+                    exibirMensagem(`❌ BLOQUEADO: Está fora do perímetro da Fábrica Santa Amélia!`, 'erro');
+                    return;
+                }
                 processarRegistroPonto(nome, tipo);
             },
-            (error) => { alert('❌ Erro no GPS: Certifique-se de que o GPS do telemóvel está ligado e que deu permissão de localização ao navegador!'); },
+            (error) => { exibirMensagem('❌ Erro no GPS: Ligue a localização e dê permissão!', 'erro'); },
             { enableHighAccuracy: true }
         );
     }
@@ -518,51 +774,63 @@
 
         if (registroHoje) {
             if (tipo === 'Entrada') {
-                if (registroHoje.entrada !== '--') return alert(`⚠️ Atenção: Entrada já registada hoje às ${registroHoje.entrada}.`);
+                if (registroHoje.entrada !== '--') {
+                    exibirMensagem(`⚠️ Entrada já registada hoje.`, 'erro');
+                    return;
+                }
                 dbRegistros.child(registroHoje.id).update({ entrada: horaStr });
-            } else {
-                dbRegistros.child(registroHoje.id).update({ saida: horaStr });
-            }
+            } else { dbRegistros.child(registroHoje.id).update({ saida: horaStr }); }
         } else {
             dbRegistros.push({ nome: nome, equipe: descobrirEquipe(nome), data: dataFormatada, entrada: tipo === 'Entrada' ? horaStr : '--', saida: tipo === 'Saída' ? horaStr : '--' });
         }
         
-        exibirMensagem(`✅ ${tipo} de ${nome} registada com sucesso!`);
+        exibirMensagem(`✅ ${tipo} de ${nome} registada com sucesso!`, 'sucesso');
         document.getElementById('nomeFuncionario').value = ''; 
         document.getElementById('senhaPonto').value = ''; 
     }
 
-    function abrirModalAdmin() {
-        document.getElementById('inputSenhaModal').value = '';
-        document.getElementById('modalSenha').style.display = 'flex';
-        document.getElementById('inputSenhaModal').focus();
-    }
+    function salvarNovasSenhas() {
+        const p = document.getElementById('novaSenhaPontoAdmin').value.trim();
+        const a = document.getElementById('novaSenhaAdminMestra').value.trim();
+        const d = document.getElementById('novaDicaSenhaAdmin').value.trim();
 
-    function verificarSenha() {
-        const senha = document.getElementById('inputSenhaModal').value;
-        if (senha === 'holoc@canva2023') {
-            document.getElementById('modalSenha').style.display = 'none';
-            document.getElementById('painelPrincipal').style.display = 'none';
-            document.getElementById('painelAdmin').style.display = 'block';
-            atualizarTabelaAdmin();
-        } else {
-            alert('❌ Palavra-passe incorreta!');
+        if(!p || !a || !d) return alert("❌ Os campos não podem ficar vazios!");
+        if(confirm("Tem certeza que deseja alterar as palavras-passe e a dica?")) {
+            dbConfig.set({ senhaPonto: p, senhaAdmin: a, dicaSenha: d }).then(() => { alert("✅ Senhas alteradas com sucesso!"); });
         }
     }
+
+    // Modal agora animado com classes CSS em vez de inline-styles
+    function abrirModalAdmin() {
+        document.getElementById('inputSenhaModal').value = '';
+        document.getElementById('modalSenha').classList.add('active');
+        setTimeout(() => document.getElementById('inputSenhaModal').focus(), 100);
+    }
     
-    document.getElementById('inputSenhaModal').addEventListener('keyup', function(e) { if (e.key === 'Enter') verificarSenha(); });
+    function fecharModalAdmin() {
+        document.getElementById('modalSenha').classList.remove('active');
+    }
+
+    function verificarSenhaAdmin() {
+        if (document.getElementById('inputSenhaModal').value === SENHA_ADMIN_ATUAL) {
+            fecharModalAdmin();
+            document.getElementById('layoutPrincipal').style.display = 'none'; 
+            document.getElementById('painelAdmin').style.display = 'block'; 
+            atualizarTabelaAdmin();
+        } else { alert('❌ Palavra-passe incorreta!'); }
+    }
+    
+    document.getElementById('inputSenhaModal').addEventListener('keyup', function(e) { if (e.key === 'Enter') verificarSenhaAdmin(); });
 
     function fecharAdmin() {
         document.getElementById('painelAdmin').style.display = 'none';
-        document.getElementById('painelPrincipal').style.display = 'block';
+        document.getElementById('layoutPrincipal').style.display = 'flex'; 
         atualizarTabelaPrincipal();
     }
 
     function atualizarTabelaAdmin() {
-        const tbody = document.getElementById('tabelaAdmin');
-        tbody.innerHTML = '';
-        const registrosInvertidos = [...registros].reverse();
-        registrosInvertidos.forEach(r => {
+        const tbody = document.getElementById('tabelaAdmin'); tbody.innerHTML = '';
+        [...registros].reverse().forEach(r => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td style="text-align: left;"><strong>${r.nome}</strong><br><span style="font-size:10px; color:#aaa;">${r.equipe}</span></td>
@@ -575,14 +843,8 @@
         });
     }
 
-    function editarRegistro(id, campo, novoValor) {
-        const updateData = {}; updateData[campo] = novoValor;
-        dbRegistros.child(id).update(updateData);
-    }
-
-    function excluirRegistro(id, nome) {
-        if (confirm(`Tem certeza que deseja apagar o registo de ${nome}?`)) dbRegistros.child(id).remove();
-    }
+    function editarRegistro(id, campo, novoValor) { const updateData = {}; updateData[campo] = novoValor; dbRegistros.child(id).update(updateData); }
+    function excluirRegistro(id, nome) { if (confirm(`Tem certeza que deseja apagar o registo de ${nome}?`)) dbRegistros.child(id).remove(); }
 
     function adicionarRegistroManual() {
         const nome = document.getElementById('adminNomeFuncionario').value;
@@ -596,159 +858,73 @@
         const dataFormatada = `${dias[dateObj.getDay()]}, ${dateObj.toLocaleDateString('pt-PT')}`;
 
         dbRegistros.push({ nome: nome, equipe: descobrirEquipe(nome), data: dataFormatada, entrada: entrada, saida: saida });
-        alert('✅ Registo manual adicionado com sucesso (bypass de GPS)!');
+        alert('✅ Registo manual adicionado!');
         document.getElementById('adminNomeFuncionario').value = ''; document.getElementById('adminData').value = '';
-        document.getElementById('adminEntrada').value = ''; document.getElementById('adminSaida').value = '';
     }
 
-    function limparHistorico() {
-        if (confirm('🚨 ATENÇÃO: Tem a CERTEZA ABSOLUTA que deseja apagar todo o histórico de chamadas do banco de dados? Isso não pode ser desfeito.')) {
-            dbRegistros.remove(); alert('🗑️ Histórico apagado com sucesso!');
-        }
-    }
-
-    // ==========================================
-    // 📊 EXPORTAÇÃO EXCEL OFICIAL (ESTILIZADA E COM CÁLCULO DE HORAS)
-    // ==========================================
-    
-    function calcularTempoTrabalhado(entrada, saida) {
-        if (!entrada || !saida || entrada === '--' || saida === '--') return '-';
-        
-        const [h1, m1] = entrada.split(':').map(Number);
-        const [h2, m2] = saida.split(':').map(Number);
-        
-        const minEntrada = (h1 * 60) + (m1 || 0);
-        const minSaida = (h2 * 60) + (m2 || 0);
-        
-        let diff = minSaida - minEntrada;
-        if (diff < 0) diff += 24 * 60;
-        
-        const horasFormatadas = String(Math.floor(diff / 60)).padStart(2, '0');
-        const minsFormatados = String(diff % 60).padStart(2, '0');
-        
-        return `${horasFormatadas}H${minsFormatados}M`;
-    }
+    function limparHistorico() { if (confirm('🚨 ATENÇÃO: Apagar todo o histórico?')) { dbRegistros.remove(); alert('🗑️ Apagado!'); } }
 
     async function exportarExcelFormatado() {
         if (registros.length === 0) return alert('Não há registos para exportar!');
         
-        const datasSet = new Set();
-        registros.forEach(r => { if (r.data) datasSet.add(r.data); });
+        const datasSet = new Set(); registros.forEach(r => { if (r.data) datasSet.add(r.data); });
         
         const datasArray = Array.from(datasSet).map(dStr => {
             const parts = dStr.split(', ');
-            const diaSemana = parts[0]; 
-            const dataStr = parts[1]; 
-            const [dia, mes, ano] = dataStr.split('/');
-            return {
-                original: dStr,
-                diaSemana: diaSemana.split('-')[0].toUpperCase(), 
-                dataCurta: dataStr,
-                objData: new Date(ano, mes - 1, dia)
-            };
+            const [dia, mes, ano] = parts[1].split('/');
+            return { original: dStr, diaSemana: parts[0].split('-')[0].toUpperCase(), dataCurta: parts[1], objData: new Date(ano, mes - 1, dia) };
         }).sort((a, b) => a.objData - b.objData);
 
-        const dataInicioStr = datasArray[0].dataCurta;
-        const dataFimStr = new Date().toLocaleDateString('pt-PT');
+        const dataInicioStr = datasArray[0].dataCurta; const dataFimStr = new Date().toLocaleDateString('pt-PT');
         const intervaloStr = `( DE ${dataInicioStr} ATÉ ${dataFimStr} )`;
 
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Frequência');
-
+        const workbook = new ExcelJS.Workbook(); const worksheet = workbook.addWorksheet('Frequência');
         const colunas = [ { width: 40 }, { width: 5 }, { width: 5 } ];
-        datasArray.forEach(() => colunas.push({ width: 18 }));
-        worksheet.columns = colunas;
+        datasArray.forEach(() => colunas.push({ width: 18 })); worksheet.columns = colunas;
 
-        const row1 = worksheet.addRow(['HOLOC', '', '', intervaloStr]);
-        worksheet.mergeCells('A1:C1');
-        
-        row1.font = { size: 16, bold: true };
-        row1.getCell(1).alignment = { horizontal: 'left', vertical: 'middle' };
-        row1.getCell(4).alignment = { horizontal: 'left', vertical: 'middle' };
+        const row1 = worksheet.addRow(['HOLOC', '', '', intervaloStr]); worksheet.mergeCells('A1:C1');
+        row1.font = { size: 16, bold: true }; row1.getCell(1).alignment = { horizontal: 'left', vertical: 'middle' };
 
-        // ---------------- EXTENSÃO ----------------
-        const rowExtYellow = worksheet.addRow(['', '', '']);
-        const rowExtRed = worksheet.addRow(['EXTENSÃO', '', '']);
+        const rowExtYellow = worksheet.addRow(['', '', '']); const rowExtRed = worksheet.addRow(['EXTENSÃO', '', '']);
         worksheet.mergeCells(`A${rowExtRed.number}:C${rowExtRed.number}`);
 
-        datasArray.forEach((d, i) => {
-            rowExtYellow.getCell(i + 4).value = 'DATA: ' + d.dataCurta;
-            rowExtRed.getCell(i + 4).value = d.diaSemana;
-        });
-
-        rowExtYellow.eachCell({ includeEmpty: true }, (cell) => {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } };
-            cell.alignment = { horizontal: 'center' };
-        });
-        
-        rowExtRed.eachCell({ includeEmpty: true }, (cell) => {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFF0000' } };
-            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            cell.alignment = { horizontal: 'center' };
-        });
+        datasArray.forEach((d, i) => { rowExtYellow.getCell(i + 4).value = 'DATA: ' + d.dataCurta; rowExtRed.getCell(i + 4).value = d.diaSemana; });
+        rowExtYellow.eachCell({ includeEmpty: true }, (cell) => { cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } }; cell.alignment = { horizontal: 'center' }; });
+        rowExtRed.eachCell({ includeEmpty: true }, (cell) => { cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFF0000' } }; cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }; cell.alignment = { horizontal: 'center' }; });
         rowExtRed.getCell(1).alignment = { horizontal: 'left' };
 
-        // 4. ORDENAÇÃO ALFABÉTICA (A-Z) NO EXCEL (Extensão)
-        const extPessoas = listaFuncionarios
-            .filter(p => p.equipe === 'Equipa de Extensão')
-            .sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
-
-        extPessoas.forEach(p => {
+        listaFuncionarios.filter(p => p.equipe === 'Equipa de Extensão').sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' })).forEach(p => {
             const rowDados = [p.nome, '', ''];
             datasArray.forEach(d => {
                 const reg = registros.find(r => r.nome === p.nome && r.data === d.original);
-                if (reg) { rowDados.push(calcularTempoTrabalhado(reg.entrada, reg.saida)); } 
-                else { rowDados.push(''); }
+                rowDados.push(reg ? formatarMinutosParaHoras(calcularMinutos(reg.entrada, reg.saida)) : '');
             });
-            const r = worksheet.addRow(rowDados);
-            r.getCell(1).font = { size: 11 };
+            const r = worksheet.addRow(rowDados); r.getCell(1).font = { size: 11 };
             for(let i=4; i<=rowDados.length; i++) { r.getCell(i).alignment = { horizontal: 'center' }; }
         });
 
         worksheet.addRow([]);
 
-        // ---------------- PESQUISA ----------------
-        const rowPesqYellow = worksheet.addRow(['', '', '']);
-        const rowPesqGreen = worksheet.addRow(['PESQUISA', '', '']);
+        const rowPesqYellow = worksheet.addRow(['', '', '']); const rowPesqGreen = worksheet.addRow(['PESQUISA', '', '']);
         worksheet.mergeCells(`A${rowPesqGreen.number}:C${rowPesqGreen.number}`);
 
-        datasArray.forEach((d, i) => {
-            rowPesqYellow.getCell(i + 4).value = 'DATA: ' + d.dataCurta;
-            rowPesqGreen.getCell(i + 4).value = d.diaSemana;
-        });
-
-        rowPesqYellow.eachCell({ includeEmpty: true }, (cell) => {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } };
-            cell.alignment = { horizontal: 'center' };
-        });
-        
-        rowPesqGreen.eachCell({ includeEmpty: true }, (cell) => {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF548235' } };
-            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            cell.alignment = { horizontal: 'center' };
-        });
+        datasArray.forEach((d, i) => { rowPesqYellow.getCell(i + 4).value = 'DATA: ' + d.dataCurta; rowPesqGreen.getCell(i + 4).value = d.diaSemana; });
+        rowPesqYellow.eachCell({ includeEmpty: true }, (cell) => { cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } }; cell.alignment = { horizontal: 'center' }; });
+        rowPesqGreen.eachCell({ includeEmpty: true }, (cell) => { cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF548235' } }; cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }; cell.alignment = { horizontal: 'center' }; });
         rowPesqGreen.getCell(1).alignment = { horizontal: 'left' };
 
-        // 5. ORDENAÇÃO ALFABÉTICA (A-Z) NO EXCEL (Pesquisa)
-        const pesqPessoas = listaFuncionarios
-            .filter(p => p.equipe === 'Equipa de Pesquisa')
-            .sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
-
-        pesqPessoas.forEach(p => {
+        listaFuncionarios.filter(p => p.equipe === 'Equipa de Pesquisa').sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' })).forEach(p => {
             const rowDados = [p.nome, '', ''];
             datasArray.forEach(d => {
                 const reg = registros.find(r => r.nome === p.nome && r.data === d.original);
-                if (reg) { rowDados.push(calcularTempoTrabalhado(reg.entrada, reg.saida)); } 
-                else { rowDados.push(''); }
+                rowDados.push(reg ? formatarMinutosParaHoras(calcularMinutos(reg.entrada, reg.saida)) : '');
             });
-            const r = worksheet.addRow(rowDados);
-            r.getCell(1).font = { size: 11 };
+            const r = worksheet.addRow(rowDados); r.getCell(1).font = { size: 11 };
             for(let i=4; i<=rowDados.length; i++) { r.getCell(i).alignment = { horizontal: 'center' }; }
         });
 
         const buffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        saveAs(blob, `Frequencia_HOLOC_${dataFimStr.replace(/\//g, '-')}.xlsx`);
+        saveAs(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `Frequencia_HOLOC_${dataFimStr.replace(/\//g, '-')}.xlsx`);
     }
 </script>
 </body>
